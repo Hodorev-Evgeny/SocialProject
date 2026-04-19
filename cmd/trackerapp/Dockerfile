@@ -7,4 +7,4 @@ COPY ../.. .
 RUN go mod tidy
 RUN go build -o /app/cmd/trackerapp/exe /app/cmd/trackerapp
 
-CMD ["/app/exe"]
+CMD ["/app/cmd/trackerapp/exe"]
