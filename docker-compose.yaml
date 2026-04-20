@@ -24,7 +24,7 @@ services:
       - "5432:5432"
 
   migrate:
-    image: migrate/migrate
+    image: migrate/migrate:v4.19.1
     container_name: migrate-container
     volumes:
       - ${PROJECT_ROOT}/migrations:/migrations
