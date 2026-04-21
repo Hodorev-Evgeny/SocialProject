@@ -1,0 +1,92 @@
+package core_logger
+
+import (
+	"context"
+	"fmt"
+	"os"
+	"path/filepath"
+	"time"
+
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
+)
+
+type Logger struct {
+	*zap.Logger
+	file *os.File
+}
+
+/*
+функция FromContext нужна для получения loggera из контекста
+нужно что бы коректно получать в middleware
+*/
+
+func FromContext(ctx context.Context) *Logger {
+	logger, ok := ctx.Value("logger").(*Logger)
+	if !ok {
+		panic("logger not found in context")
+	}
+	return logger
+}
+
+func NewLogger(config Config) (*Logger, error) {
+	// задаю уровень логирования
+	zaplvl := zap.NewAtomicLevel()
+	if err := zaplvl.UnmarshalText([]byte(config.Level)); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal level: %w", err)
+	}
+
+	// создаю папку где будут хрониться логи рпограмы
+	if err := os.MkdirAll(config.Folder, 0755); err != nil {
+		return nil, fmt.Errorf("failed to make folder: %w", err)
+	}
+
+	// задаю формат имени файла для лога и указываю путь к файлу
+	timeset := time.Now().UTC().Format("2006-01-02T15:04:05.000Z")
+	LogerFilePath := filepath.Join(
+		config.Folder,
+		fmt.Sprintf("%s.log", timeset),
+	)
+
+	// открывю файл с логами и д
+	logFile, err := os.OpenFile(LogerFilePath, os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return nil, fmt.Errorf("failed to open log file: %w", err)
+	}
+
+	zapConfig := zap.NewDevelopmentEncoderConfig()
+	zapConfig.EncodeTime = zapcore.TimeEncoderOfLayout("2006-01-02T15:04:05.000Z")
+
+	zapEncoder := zapcore.NewConsoleEncoder(zapConfig)
+
+	// создаю ядра для айла и для консоли что бы логировать в оба
+	core := zapcore.NewTee(
+		zapcore.NewCore(zapEncoder, logFile, zaplvl),
+		zapcore.NewCore(zapEncoder, os.Stdout, zaplvl),
+	)
+
+	zapLogger := zap.New(core, zap.AddCaller())
+
+	return &Logger{
+		Logger: zapLogger,
+		file:   logFile,
+	}, nil
+}
+
+// переделываю With что бы она зодовала нужную строку
+
+func (l *Logger) With(field ...zap.Field) *Logger {
+	return &Logger{
+		Logger: l.Logger.With(field...),
+		file:   l.file,
+	}
+}
+
+//окуратно закрываю логер
+
+func (l *Logger) Close() {
+	if err := l.file.Close(); err != nil {
+		fmt.Printf("failed to close log file: %v", err)
+
+	}
+}
