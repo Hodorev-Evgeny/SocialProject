@@ -7,9 +7,13 @@ import (
 	"os/signal"
 	"syscall"
 
+	_ "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/domain"
 	core_logger "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/logger"
+	core_repository_pool "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/repository/postgresql/pool"
 	core_middleware "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/transport/http/middleware"
 	core_transport_server "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/transport/server"
+	features_users_repository "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/users/repository/postgres"
+	feature_user_service "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/users/service"
 	features_users_transport "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/users/transport/http"
 	"go.uber.org/zap"
 )
@@ -32,7 +36,22 @@ func main() {
 
 	logger.Debug("starting expenses app")
 
-	userTransporthttp := features_users_transport.NewUserHTTPHandler(nil)
+	logger.Debug("starting initialization pool connection")
+	pgconfig := core_repository_pool.MustPostgresConfig()
+	pool := core_repository_pool.CreatePoolMust(ctx, pgconfig)
+	defer pool.Close()
+
+	if err := pool.Ping(ctx); err != nil {
+		logger.Error("error pinging pool", zap.Error(err))
+		os.Exit(1)
+	}
+
+	logger.Debug("starting initialization user service")
+	userRepo := features_users_repository.NewUserRepository(pool)
+	userServ := feature_user_service.NewUserService(userRepo)
+
+	logger.Debug("starting initialization user transport")
+	userTransporthttp := features_users_transport.NewUserHTTPHandler(userServ)
 	userRouters := userTransporthttp.Routers()
 
 	apiVersionRouter := core_transport_server.NewAPIVersionRouter(core_transport_server.ApiVersion1)

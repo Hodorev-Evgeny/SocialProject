@@ -2,7 +2,7 @@ CREATE SCHEMA trackerapp;
 
 
 CREATE TABLE trackerapp.users (
-    id UUID PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     phone_number VARCHAR(15) CHECK (
@@ -15,7 +15,7 @@ CREATE TABLE trackerapp.users (
 );
 
 CREATE TABLE trackerapp.transactions (
-    id UUID PRIMARY KEY,
+    id SERIAL PRIMARY KEY,
     sum INTEGER NOT NULL,
     type_transaction VARCHAR(125) NOT NULL CHECK (
         type_transaction = 'Income' OR type_transaction = 'Expenditure'
@@ -23,7 +23,7 @@ CREATE TABLE trackerapp.transactions (
     date TIMESTAMP NOT NULL,
     category VARCHAR(125) NOT NULL,
     comments VARCHAR(1000),
-    user_id UUID NOT NULL,
+    user_id INTEGER NOT NULL,
     time_create TIMESTAMPTZ NOT NULL,
     time_changes TIMESTAMPTZ,
 
