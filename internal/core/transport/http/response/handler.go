@@ -39,7 +39,7 @@ func (h *HandlerResponse) ErrorResponse(err error, msg string) {
 		logfunc = h.log.Warn
 
 	case errors.Is(err, core_errors.ErrorValidation):
-		statusCode = http.StatusLengthRequired
+		statusCode = http.StatusUnprocessableEntity
 		logfunc = h.log.Warn
 
 	default:

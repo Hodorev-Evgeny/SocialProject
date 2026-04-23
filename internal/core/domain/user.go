@@ -1,6 +1,9 @@
 package core_domain
 
 import (
+	"fmt"
+	"net/mail"
+	"regexp"
 	"time"
 )
 
@@ -50,6 +53,24 @@ func CreateUnincelizedUser(
 }
 
 func (u *User) Validate() error {
-	// сделать волидацию
+	if u.Full_name == "" {
+		return fmt.Errorf("invalid user full_name")
+	}
+
+	if _, err := mail.ParseAddress(u.Email); err != nil {
+		return fmt.Errorf("invalid user email")
+	}
+
+	if u.Password == "" {
+		return fmt.Errorf("invalid user password for user")
+	}
+
+	if u.Phone_number != nil {
+		regular := regexp.MustCompile(`^\+[0-9]+$`)
+		if !regular.MatchString(*u.Phone_number) {
+			return fmt.Errorf("invalid user phone number")
+		}
+	}
+
 	return nil
 }
