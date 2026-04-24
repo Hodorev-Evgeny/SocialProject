@@ -46,11 +46,17 @@ migrate-up:
 migrate-down:
 	@make migrate-action action=down
 
-docker-start:
-	@docker compose up -d
+database-start:
+	@docker compose up -d data-base
 
-docker-down:
-	@docker compose down
+database-down:
+	@docker compose down data-base
+
+port-forwarder-start:
+	@docker compose up -d forwarder-port
+
+port-forwarder-stop:
+	@docker compose down forwarder-port
 
 app-run:
 	@export LOGGER_FOLDER=${PROJECT_ROOT}/out/logs && \
