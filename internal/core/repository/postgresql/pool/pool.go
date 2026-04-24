@@ -11,6 +11,7 @@ import (
 
 type Pool interface {
 	QueryRow(ctx context.Context, sql string, args ...any) (pgx.Row, error)
+	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
 	GetTimeout() time.Duration
 	Close()
 }
@@ -59,6 +60,10 @@ func (c *ConnectionPool) Ping(ctx context.Context) error {
 
 func (c *ConnectionPool) QueryRow(ctx context.Context, sql string, args ...any) (pgx.Row, error) {
 	return c.pool.QueryRow(ctx, sql, args...), nil
+}
+
+func (c *ConnectionPool) Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error) {
+	return c.pool.Query(ctx, sql, args...)
 }
 
 func CreatePoolMust(ctx context.Context, config PostgresConfig) *ConnectionPool {

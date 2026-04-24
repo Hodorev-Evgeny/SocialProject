@@ -36,6 +36,7 @@ func Logger(log *core_logger.Logger) Middleware {
 			logger := log.With(
 				zap.String("request_id", requestId),
 				zap.String("url", r.URL.String()),
+				zap.String("method", r.Method),
 			)
 
 			ctx := context.WithValue(r.Context(), "logger", logger)
