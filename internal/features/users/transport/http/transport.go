@@ -14,7 +14,8 @@ type UserHTTPHandler struct {
 
 type userService interface {
 	CreateUser(ctx context.Context, req core_domain.User) (core_domain.User, error)
-	GetUser(ctx context.Context, limit *int, offset *int) ([]core_domain.User, error)
+	GetUsers(ctx context.Context, limit *int, offset *int) ([]core_domain.User, error)
+	ExtraditionUser(ctx context.Context, id int) (core_domain.User, error)
 }
 
 func NewUserHTTPHandler(
@@ -36,6 +37,11 @@ func (h *UserHTTPHandler) Routers() []core_transport_server.Route {
 			Method:  http.MethodGet,
 			Path:    "/users",
 			Handler: h.GetUsers,
+		},
+		{
+			Method:  http.MethodGet,
+			Path:    "/users/{id}",
+			Handler: h.ExtraditionUser,
 		},
 	}
 }

@@ -8,7 +8,7 @@ import (
 	core_errors "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/errors"
 )
 
-func (s *UserService) GetUser(ctx context.Context, limit *int, offset *int) ([]core_domain.User, error) {
+func (s *UserService) GetUsers(ctx context.Context, limit *int, offset *int) ([]core_domain.User, error) {
 	if limit != nil && *limit < 0 {
 		return []core_domain.User{},
 			fmt.Errorf("limit is not valid %w", core_errors.ErrorValidation)
@@ -18,7 +18,7 @@ func (s *UserService) GetUser(ctx context.Context, limit *int, offset *int) ([]c
 			fmt.Errorf("offset in not valid: %w", core_errors.ErrorValidation)
 	}
 
-	usersDomains, err := s.userRepository.GetUser(ctx, limit, offset)
+	usersDomains, err := s.userRepository.GetUsers(ctx, limit, offset)
 	if err != nil {
 		return []core_domain.User{}, fmt.Errorf("error getting users: %w", err)
 	}
