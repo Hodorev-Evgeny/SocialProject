@@ -1,0 +1,48 @@
+package features_users_repository
+
+import (
+	"context"
+	"fmt"
+
+	core_domain "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/domain"
+)
+
+func (r *UserRepository) GetUser(
+	ctx context.Context,
+	limit *int, offset *int,
+) ([]core_domain.User, error) {
+	ctx, close := context.WithTimeout(ctx, r.pool.GetTimeout())
+	defer close()
+
+	query := `
+		SELECT *
+		FROM trackerapp.users
+		ORDER BY id
+		LIMIT $1 OFFSET $2`
+
+	rows, err := r.pool.Query(ctx, query, limit, offset)
+	if err != nil {
+		return nil, fmt.Errorf("error get users: %w", err)
+	}
+	defer rows.Close()
+
+	var users []core_domain.User
+	for rows.Next() {
+		var user core_domain.User
+
+		err := rows.Scan(
+			&user.ID,
+			&user.Full_name,
+			&user.Email,
+			&user.Phone_number,
+			&user.Password,
+			&user.Time_add)
+		if err != nil {
+			return nil, fmt.Errorf("error scan users: %w", err)
+		}
+
+		users = append(users, user)
+	}
+
+	return users, nil
+}

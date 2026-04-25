@@ -23,6 +23,14 @@ func NewHandlerResponse(logger *core_logger.Logger, rw http.ResponseWriter) *Han
 	}
 }
 
+func (h *HandlerResponse) JSONResponseHandler(statuscode int, data any) {
+	h.rw.WriteHeader(statuscode)
+
+	if err := json.NewEncoder(h.rw).Encode(data); err != nil {
+		h.log.Error("Failed to encode response", zap.Error(err))
+	}
+}
+
 func (h *HandlerResponse) ErrorResponse(err error, msg string) {
 	var (
 		statusCode int

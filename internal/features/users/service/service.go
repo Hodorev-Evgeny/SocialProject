@@ -12,6 +12,7 @@ type UserService struct {
 
 type UserRepository interface {
 	AddUser(ctx context.Context, user core_domain.User) (core_domain.User, error)
+	GetUser(ctx context.Context, limit *int, offset *int) ([]core_domain.User, error)
 }
 
 func NewUserService(
