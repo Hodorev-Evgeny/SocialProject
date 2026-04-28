@@ -4,10 +4,13 @@ export
 export PROJECT_ROOT=$(shell pwd)
 
 
+env-up:
+	@docker compose up -d data-base
+
 env-cleanup:
 	@read -p "Очистить все volume файлы окружения? Опасность утери данных. [y/N]: " ans; \
 	if [ "$$ans" = "y" ]; then \
-		docker compose down data-base && \
+		docker compose down data-base forwarder-port && \
 		rm -rf ${PROJECT_ROOT}/out/pgdata && \
 		echo "Файлы окружения очищены"; \
 	else \

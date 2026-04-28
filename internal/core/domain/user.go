@@ -74,3 +74,47 @@ func (u *User) Validate() error {
 
 	return nil
 }
+
+type UserPatch struct {
+	Full_name Nullable[string]
+	Email     Nullable[string]
+}
+
+func NewUserPatch(full_name Nullable[string],
+	email Nullable[string],
+) UserPatch {
+	return UserPatch{
+		Full_name: full_name,
+		Email:     email,
+	}
+}
+
+func (u *UserPatch) Validate() error {
+	if u.Full_name.Set && u.Full_name.Value == nil {
+		return fmt.Errorf("invalid user full_name")
+	}
+
+	return nil
+}
+
+func (u *User) ApplyPatch(patch UserPatch) error {
+	if patch.Validate() != nil {
+		return fmt.Errorf("invalid user patch")
+	}
+
+	tmp := *u
+	if patch.Full_name.Set {
+		tmp.Full_name = *patch.Full_name.Value
+	}
+
+	if patch.Email.Set {
+		tmp.Email = *patch.Email.Value
+	}
+
+	if tmp.Validate() != nil {
+		return fmt.Errorf("invalid user patch")
+	}
+
+	*u = tmp
+	return nil
+}

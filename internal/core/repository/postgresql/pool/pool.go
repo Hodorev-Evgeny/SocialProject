@@ -6,12 +6,14 @@ import (
 	"time"
 
 	"github.com/jackc/pgx/v5"
+	"github.com/jackc/pgx/v5/pgconn"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 type Pool interface {
 	QueryRow(ctx context.Context, sql string, args ...any) (pgx.Row, error)
 	Query(ctx context.Context, sql string, args ...any) (pgx.Rows, error)
+	Exec(ctx context.Context, sql string, arguments ...any) (pgconn.CommandTag, error)
 	GetTimeout() time.Duration
 	Close()
 }
@@ -52,6 +54,9 @@ func (c *ConnectionPool) GetTimeout() time.Duration {
 
 func (c *ConnectionPool) Close() {
 	c.pool.Close()
+}
+func (c *ConnectionPool) Exec(ctx context.Context, sql string, arguments ...any) (pgconn.CommandTag, error) {
+	return c.pool.Exec(ctx, sql, arguments...)
 }
 
 func (c *ConnectionPool) Ping(ctx context.Context) error {

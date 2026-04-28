@@ -7,7 +7,7 @@ import (
 	core_domain "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/domain"
 )
 
-func (r *UserRepository) GetUser(
+func (r *UserRepository) GetUsers(
 	ctx context.Context,
 	limit *int, offset *int,
 ) ([]core_domain.User, error) {
