@@ -1,4 +1,4 @@
-package core_http_query_parm
+package core_http_utils
 
 import (
 	"fmt"
