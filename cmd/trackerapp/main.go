@@ -62,8 +62,8 @@ func main() {
 		logger,
 		core_middleware.RequestId(),
 		core_middleware.Logger(logger),
-		core_middleware.PanicRecovery(),
 		core_middleware.Trace(),
+		core_middleware.PanicRecovery(),
 	)
 	httpServer.ResisterApiVersionRouter(apiVersionRouter)
 

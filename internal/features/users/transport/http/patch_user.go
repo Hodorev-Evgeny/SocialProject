@@ -45,6 +45,7 @@ func (h *UserHTTPHandler) PatchUser(w http.ResponseWriter, r *http.Request) {
 	log := core_logger.FromContext(ctx)
 	ResponseHandler := response.NewHandlerResponse(log, w)
 
+	log.Info("Start processing decoding body")
 	var data RequestPatchUser
 	if err := core_http_utils.DecodeJSON(&data, r); err != nil {
 		ResponseHandler.ErrorResponse(err, "error parsing request")
@@ -52,6 +53,7 @@ func (h *UserHTTPHandler) PatchUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Info("Start processing patch user")
 	userId, err := core_http_utils.GetValuePathInt(r, "id")
 	if err != nil {
 		ResponseHandler.ErrorResponse(err, "error parsing id")
@@ -63,7 +65,9 @@ func (h *UserHTTPHandler) PatchUser(w http.ResponseWriter, r *http.Request) {
 	)
 
 	userPatch := CreateUserPatch(data)
+	log.Info("End processing patch user")
 
+	log.Info("Start processing response body")
 	userDomain, err := h.userService.PatchUser(ctx, userId, userPatch)
 	if err != nil {
 		ResponseHandler.ErrorResponse(err, "error patching user")

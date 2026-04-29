@@ -11,11 +11,32 @@ type UserService struct {
 }
 
 type UserRepository interface {
-	AddUser(ctx context.Context, user core_domain.User) (core_domain.User, error)
-	GetUsers(ctx context.Context, limit *int, offset *int) ([]core_domain.User, error)
-	ExtraditionUser(ctx context.Context, id int) (core_domain.User, error)
-	DeleteUser(ctx context.Context, id int) error
-	PatchUser(ctx context.Context, id int, patch core_domain.User) (core_domain.User, error)
+	AddUser(
+		ctx context.Context,
+		user core_domain.User,
+	) (core_domain.User, error)
+
+	GetUsers(
+		ctx context.Context,
+		limit *int,
+		offset *int,
+	) ([]core_domain.User, error)
+
+	ExtraditionUser(
+		ctx context.Context,
+		id int,
+	) (core_domain.User, error)
+
+	DeleteUser(
+		ctx context.Context,
+		id int,
+	) error
+
+	PatchUser(
+		ctx context.Context,
+		id int,
+		patch core_domain.User,
+	) (core_domain.User, error)
 }
 
 func NewUserService(

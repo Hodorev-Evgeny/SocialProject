@@ -13,11 +13,32 @@ type UserHTTPHandler struct {
 }
 
 type userService interface {
-	CreateUser(ctx context.Context, req core_domain.User) (core_domain.User, error)
-	GetUsers(ctx context.Context, limit *int, offset *int) ([]core_domain.User, error)
-	ExtraditionUser(ctx context.Context, id int) (core_domain.User, error)
-	DeleteUser(ctx context.Context, id int) error
-	PatchUser(ctx context.Context, id int, req core_domain.UserPatch) (core_domain.User, error)
+	CreateUser(
+		ctx context.Context,
+		req core_domain.User,
+	) (core_domain.User, error)
+
+	GetUsers(
+		ctx context.Context,
+		limit *int,
+		offset *int,
+	) ([]core_domain.User, error)
+
+	ExtraditionUser(
+		ctx context.Context,
+		id int,
+	) (core_domain.User, error)
+
+	DeleteUser(
+		ctx context.Context,
+		id int,
+	) error
+
+	PatchUser(
+		ctx context.Context,
+		id int,
+		req core_domain.UserPatch,
+	) (core_domain.User, error)
 }
 
 func NewUserHTTPHandler(

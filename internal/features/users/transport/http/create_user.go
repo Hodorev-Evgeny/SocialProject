@@ -22,20 +22,22 @@ func (h *UserHTTPHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 	log := core_logger.FromContext(ctx)
 	RsponceHandler := response.NewHandlerResponse(log, w)
 
-	log.Info("CreateUser called")
-
+	log.Info("Start decoding body")
 	var req CreateUserRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
 		RsponceHandler.ErrorResponse(err, "error decoding request body")
 		return
 	}
 
+	log.Info("Start processing creating new user")
 	userDomain, err := h.userService.CreateUser(ctx, DTOFromDomain(req))
 	if err != nil {
 		RsponceHandler.ErrorResponse(err, "error creating user")
 		return
 	}
+	log.Info("End processing creating new user")
 
+	log.Info("Start writing response")
 	respons := DomainFromResponse(userDomain)
 	if err := json.NewEncoder(w).Encode(respons); err != nil {
 		RsponceHandler.ErrorResponse(err, "error writing response")

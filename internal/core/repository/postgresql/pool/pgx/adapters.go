@@ -1,6 +1,8 @@
 package core_pgx_pool
 
 import (
+	"errors"
+
 	core_repository_pool "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/repository/postgresql/pool"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -17,7 +19,7 @@ type Rows struct {
 func (r Rows) Scan(dest ...any) error {
 	err := r.Rows.Scan(dest...)
 	if err != nil {
-		if err == pgx.ErrNoRows {
+		if errors.Is(err, pgx.ErrNoRows) {
 			return core_repository_pool.ErrNoRows
 		}
 		return err

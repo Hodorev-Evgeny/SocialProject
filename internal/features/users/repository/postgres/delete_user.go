@@ -11,9 +11,10 @@ func (r *UserRepository) DeleteUser(ctx context.Context, id int) error {
 	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
-	query := `DELETE 
+	query := `
+		DELETE 
 		FROM trackerapp.users 
-		WHERE id = $1`
+		WHERE id = $1;`
 
 	comantag, err := r.pool.Exec(ctx, query, id)
 	if err != nil {

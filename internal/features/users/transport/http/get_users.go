@@ -18,17 +18,20 @@ func (h *UserHTTPHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
 	log := core_logger.FromContext(ctx)
 	ResponseHandler := response.NewHandlerResponse(log, w)
 
+	log.Info("Start processing get query parameters")
 	limit, offset, err := GetLimitAnsOffset(r)
 	if err != nil {
 		ResponseHandler.ErrorResponse(err, "error parsing limit/offset")
 		return
 	}
 
+	log.Info("Start processing get users")
 	usersDomain, err := h.userService.GetUsers(ctx, limit, offset)
 	if err != nil {
 		ResponseHandler.ErrorResponse(err, "error getting users")
 		return
 	}
+	log.Info("End processing get users")
 
 	userRsponse := DomainFromDTOesponse(usersDomain)
 

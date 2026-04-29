@@ -50,6 +50,10 @@ func (h *HandlerResponse) ErrorResponse(err error, msg string) {
 		statusCode = http.StatusUnprocessableEntity
 		logfunc = h.log.Warn
 
+	case errors.Is(err, core_errors.ErrorNotFoud):
+		statusCode = http.StatusNotFound
+		logfunc = h.log.Warn
+
 	default:
 		statusCode = http.StatusInternalServerError
 		logfunc = h.log.Error
