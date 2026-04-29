@@ -15,6 +15,7 @@ import (
 type RequestPatchUser struct {
 	FullName core_http_types.Nullable[string] `json:"full_name"`
 	Email    core_http_types.Nullable[string] `json:"email"`
+	Phone    core_http_types.Nullable[string] `json:"phone"`
 }
 
 func (u *RequestPatchUser) Validate() error {
@@ -35,6 +36,7 @@ func (u *RequestPatchUser) Validate() error {
 func CreateUserPatch(user RequestPatchUser) core_domain.UserPatch {
 	return core_domain.NewUserPatch(user.FullName.ToDomain(),
 		user.Email.ToDomain(),
+		user.Phone.ToDomain(),
 	)
 }
 

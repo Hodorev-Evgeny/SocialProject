@@ -1,4 +1,4 @@
-package core_repository_pool
+package core_pgx_pool
 
 import (
 	"fmt"

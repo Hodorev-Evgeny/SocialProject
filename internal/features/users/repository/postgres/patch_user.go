@@ -12,23 +12,20 @@ func (r *UserRepository) PatchUser(ctx context.Context,
 	patch core_domain.User,
 ) (core_domain.User, error) {
 	query := `UPDATE trackerapp.users 
-			SET full_name=$1, email=$2
-			WHERE id=$3
+			SET full_name=$1, email=$2, phone_number=$3
+			WHERE id=$4
 			RETURNING id, full_name, email, phone_number, password, time_add;`
 
-	row, err := r.pool.QueryRow(ctx,
+	row := r.pool.QueryRow(ctx,
 		query,
 		patch.Full_name,
 		patch.Email,
+		patch.Phone_number,
 		id,
 	)
 
-	if err != nil {
-		return core_domain.User{}, fmt.Errorf("failed to update user: %w", err)
-	}
-
 	var UserUpdated core_domain.User
-	err = row.Scan(
+	err := row.Scan(
 		&UserUpdated.ID,
 		&UserUpdated.Full_name,
 		&UserUpdated.Email,

@@ -20,9 +20,18 @@ type Logger struct {
 функция FromContext нужна для получения loggera из контекста
 нужно что бы коректно получать в middleware
 */
+type keyLogger struct{}
+
+var (
+	key = keyLogger{}
+)
+
+func ToContext(ctx context.Context, logger *Logger) context.Context {
+	return context.WithValue(ctx, key, logger)
+}
 
 func FromContext(ctx context.Context) *Logger {
-	logger, ok := ctx.Value("logger").(*Logger)
+	logger, ok := ctx.Value(key).(*Logger)
 	if !ok {
 		panic("logger not found in context")
 	}

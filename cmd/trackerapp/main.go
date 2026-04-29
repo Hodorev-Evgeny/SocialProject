@@ -9,7 +9,7 @@ import (
 
 	_ "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/domain"
 	core_logger "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/logger"
-	core_repository_pool "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/repository/postgresql/pool"
+	core_pgx_pool "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/repository/postgresql/pool/pgx"
 	core_middleware "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/transport/http/middleware"
 	core_transport_server "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/transport/server"
 	features_users_repository "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/users/repository/postgres"
@@ -37,8 +37,8 @@ func main() {
 	logger.Debug("starting expenses app")
 
 	logger.Debug("starting initialization pool connection")
-	pgconfig := core_repository_pool.MustPostgresConfig()
-	pool := core_repository_pool.CreatePoolMust(ctx, pgconfig)
+	pgconfig := core_pgx_pool.MustPostgresConfig()
+	pool := core_pgx_pool.CreatePoolMust(ctx, pgconfig)
 	defer pool.Close()
 
 	if err := pool.Ping(ctx); err != nil {

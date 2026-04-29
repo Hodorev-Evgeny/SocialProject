@@ -17,19 +17,15 @@ func (r *UserRepository) AddUser(ctx context.Context, user core_domain.User) (co
 	RETURNING id, full_name, email, phone_number, password, time_add;
 	`
 
-	row, err := r.pool.QueryRow(ctx, quqry,
+	row := r.pool.QueryRow(ctx, quqry,
 		user.Full_name,
 		user.Email,
 		user.Phone_number,
 		user.Password,
 		user.Time_add)
 
-	if err != nil {
-		return core_domain.User{}, fmt.Errorf("error inserting user: %w", err)
-	}
-
 	var userDomain core_domain.User
-	err = row.Scan(
+	err := row.Scan(
 		&userDomain.ID,
 		&userDomain.Full_name,
 		&userDomain.Email,

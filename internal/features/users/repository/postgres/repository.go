@@ -6,7 +6,7 @@ type UserRepository struct {
 	pool core_repository_pool.Pool
 }
 
-func NewUserRepository(pool *core_repository_pool.ConnectionPool) *UserRepository {
+func NewUserRepository(pool core_repository_pool.Pool) *UserRepository {
 	return &UserRepository{
 		pool: pool,
 	}
