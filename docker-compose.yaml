@@ -20,11 +20,17 @@ services:
       POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - ${PROJECT_ROOT}/out/pgdata:/var/lib/postgresql
-    ports:
-      - "5432:5432"
+    restart: always
 
   migrate:
-    image: migrate/migrate
+    image: migrate/migrate:v4.19.1
     container_name: migrate-container
     volumes:
       - ${PROJECT_ROOT}/migrations:/migrations
+
+  forwarder-port:
+    image: alpine/socat:1.8.0.3
+    container_name: expanses-tracker-postgres-forwarder-port
+    command: "tcp-listen:5432,fork,reuseaddr tcp-connect:data-base:5432"
+    ports:
+      - "127.0.0.1:5432:5432"
