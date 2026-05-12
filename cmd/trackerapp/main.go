@@ -55,7 +55,8 @@ func main() {
 
 	logger.Debug("starting initialization auth service")
 	authRepo := features_auth_repository.NewAuthRepository(pool)
-	authServ := features_auth_service.NewAuthService(authRepo)
+	jwtCfg := features_auth_service.MustJWTConfig()
+	authServ := features_auth_service.NewAuthService(authRepo, userRepo, jwtCfg)
 
 	logger.Debug("starting initialization user transport")
 	userTransporthttp := features_users_transport.NewUserHTTPHandler(userServ)

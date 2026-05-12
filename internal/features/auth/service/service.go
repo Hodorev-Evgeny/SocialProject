@@ -12,6 +12,7 @@ import (
 
 	core_domain "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/domain"
 	core_errors "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/errors"
+	features_auth_repository "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/auth/repository/postgres"
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
@@ -19,7 +20,9 @@ import (
 )
 
 type AuthService struct {
-	auth Repository
+	auth  Repository
+	users userReader
+	jwt   JWTConfig
 }
 
 type Repository interface {
@@ -27,10 +30,11 @@ type Repository interface {
 	CreateVerification(ctx context.Context, id uuid.UUID, userID int, purpose string, codeHash string, expiresAt time.Time) error
 	CreateRegisterVerification(ctx context.Context, id uuid.UUID, userID int, purpose string, codeHash string, expiresAt time.Time) error
 	InsertRegisteredUser(ctx context.Context, fullName, email string, phone *string, passwordHash string, timeAdd time.Time, role string) (userID int, err error)
+	VerifyOtpConsumeAndCreateRefreshSession(ctx context.Context, p features_auth_repository.VerifyOtpParams) (userID int, err error)
 }
 
-func NewAuthService(auth Repository) *AuthService {
-	return &AuthService{auth: auth}
+func NewAuthService(auth Repository, users userReader, jwt JWTConfig) *AuthService {
+	return &AuthService{auth: auth, users: users, jwt: jwt}
 }
 
 func (s *AuthService) Register(ctx context.Context, req core_domain.User) (verificationID string, otpCode string, err error) {

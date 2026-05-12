@@ -12,7 +12,7 @@ func (r *AuthRepository) CreateRegisterVerification(ctx context.Context, id uuid
 	defer cancel()
 
 	query := `
-	INSERT INTO trackerapp.register_verifications (id, user_id, purpose, code_hash, expires_at)
+	INSERT INTO trackerapp.auth_verifications (id, user_id, purpose, code_hash, expires_at)
 	VALUES ($1, $2, $3, $4, $5);
 	`
 

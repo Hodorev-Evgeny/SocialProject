@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	core_errors "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/errors"
-	"github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/logger"
+	core_logger "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/logger"
 	"go.uber.org/zap"
 )
 
