@@ -19,6 +19,7 @@ type User struct {
 	Phone_number *string
 	Password     string
 	Time_add     time.Time
+	Description  *string
 }
 
 func CreateUser(
