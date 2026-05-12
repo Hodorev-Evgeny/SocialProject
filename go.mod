@@ -8,6 +8,7 @@ require (
 	github.com/jackc/pgx/v5 v5.9.2
 	github.com/kelseyhightower/envconfig v1.4.0
 	go.uber.org/zap v1.27.1
+	golang.org/x/crypto v0.40.0
 )
 
 require (

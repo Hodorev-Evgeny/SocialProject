@@ -11,7 +11,11 @@ CREATE TABLE trackerapp.users (
         char_length(phone_number) BETWEEN 10 AND 15
         ),
     password VARCHAR NOT NULL,
-    time_add TIMESTAMPTZ NOT NULL
+    time_add TIMESTAMPTZ NOT NULL,
+    role VARCHAR(10) NOT NULL DEFAULT 'passenger' CHECK (
+        role = 'passenger' OR role = 'driver'
+    ),
+    is_verified BOOLEAN NOT NULL DEFAULT FALSE
 );
 
 CREATE TABLE trackerapp.transactions (
