@@ -17,7 +17,7 @@ func (r *UserRepository) ExtraditionUser(ctx context.Context, id int) (core_doma
 
 	query := `
 		SELECT * 
-		FROM trackerapp.users 
+		FROM social.users 
         WHERE id=$1;`
 
 	row := r.pool.QueryRow(ctx, query, id)

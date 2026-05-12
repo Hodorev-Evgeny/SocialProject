@@ -12,7 +12,7 @@ func (r *UserRepository) AddUser(ctx context.Context, user core_domain.User) (co
 	defer close()
 
 	quqry := `
-	INSERT INTO trackerapp.users (full_name, email, phone_number, password, time_add)
+	INSERT INTO social.users (full_name, email, phone_number, password, time_add)
 	VALUES ($1, $2, $3, $4, $5)
 	RETURNING id, full_name, email, phone_number, password, time_add;
 	`

@@ -19,7 +19,7 @@ func (r *UserRepository) GetUsers(
 
 	query := `
 		SELECT *
-		FROM trackerapp.users
+		FROM social.users
 		ORDER BY id
 		LIMIT $1 OFFSET $2;`
 

@@ -12,7 +12,7 @@ func (r *UserRepository) PatchUser(ctx context.Context,
 	patch core_domain.User,
 ) (core_domain.User, error) {
 	query := `
-			UPDATE trackerapp.users 
+			UPDATE social.users 
 			SET full_name=$1, email=$2, phone_number=$3
 			WHERE id=$4
 			RETURNING id, full_name, email, phone_number, password, time_add;`

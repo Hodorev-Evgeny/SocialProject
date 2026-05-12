@@ -12,6 +12,9 @@ import (
 	core_pgx_pool "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/repository/postgresql/pool/pgx"
 	core_middleware "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/transport/http/middleware"
 	core_transport_server "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/transport/server"
+	feature_repository_passenger "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/passenger/repository"
+	feature_service_passenger "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/passenger/service"
+	feature_transport_passenger "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/passenger/transport"
 	features_users_repository "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/users/repository/postgres"
 	feature_user_service "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/users/service"
 	features_users_transport "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/users/transport/http"
@@ -54,8 +57,14 @@ func main() {
 	userTransporthttp := features_users_transport.NewUserHTTPHandler(userServ)
 	userRouters := userTransporthttp.Routers()
 
+	driverRepository := feature_repository_passenger.CreatePassengerRepository(pool)
+	driverService := feature_service_passenger.CreatePassengerService(driverRepository)
+	driverTransport := feature_transport_passenger.NewPassengerTransport(driverService)
+	driveRouter := driverTransport.Route()
+
 	apiVersionRouter := core_transport_server.NewAPIVersionRouter(core_transport_server.ApiVersion1)
 	apiVersionRouter.RegisterRoutes(userRouters...)
+	apiVersionRouter.RegisterRoutes(driveRouter...)
 
 	httpServer := core_transport_server.NewServer(
 		core_transport_server.MustNewConfigServer(),

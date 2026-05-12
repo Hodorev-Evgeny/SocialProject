@@ -5,15 +5,15 @@ services:
     build:
       context: .
       dockerfile: cmd/trackerapp/Dockerfile
-    container_name: "main-app"
+    container_name: "social-app"
     ports:
-      - "8080:8080"
+      - "5050:5050"
     depends_on:
       - data-base
 
   data-base:
     image: postgres:18.3-bookworm
-    container_name: "DataBase"
+    container_name: "SocialBase"
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
@@ -30,7 +30,7 @@ services:
 
   forwarder-port:
     image: alpine/socat:1.8.0.3
-    container_name: expanses-tracker-postgres-forwarder-port
+    container_name: social-database-postgres-forwarder-port
     command: "tcp-listen:5432,fork,reuseaddr tcp-connect:data-base:5432"
     ports:
       - "127.0.0.1:5432:5432"

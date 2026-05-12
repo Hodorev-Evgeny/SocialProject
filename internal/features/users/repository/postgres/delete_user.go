@@ -13,7 +13,7 @@ func (r *UserRepository) DeleteUser(ctx context.Context, id int) error {
 
 	query := `
 		DELETE 
-		FROM trackerapp.users 
+		FROM social.users 
 		WHERE id = $1;`
 
 	comantag, err := r.pool.Exec(ctx, query, id)

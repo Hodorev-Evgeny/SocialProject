@@ -1,7 +1,7 @@
-CREATE SCHEMA trackerapp;
+CREATE SCHEMA social;
 
 
-CREATE TABLE trackerapp.users (
+CREATE TABLE social.users (
     id SERIAL PRIMARY KEY,
     full_name VARCHAR(255) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
@@ -14,18 +14,14 @@ CREATE TABLE trackerapp.users (
     time_add TIMESTAMPTZ NOT NULL
 );
 
-CREATE TABLE trackerapp.transactions (
+CREATE TABLE social.drive (
     id SERIAL PRIMARY KEY,
-    sum INTEGER NOT NULL,
-    type_transaction VARCHAR(125) NOT NULL CHECK (
-        type_transaction = 'Income' OR type_transaction = 'Expenditure'
-        ),
-    date TIMESTAMP NOT NULL,
-    category VARCHAR(125) NOT NULL,
-    comments VARCHAR(1000),
     user_id INTEGER NOT NULL,
-    time_create TIMESTAMPTZ NOT NULL,
-    time_changes TIMESTAMPTZ,
+    time_to TIMESTAMPTZ NOT NULL,
+    time_from TIMESTAMPTZ,
+    status VARCHAR(128) CHECK (
+        status IN ('Active', 'Finished')
+        ),
 
-    FOREIGN KEY (user_id) REFERENCES trackerapp.users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES social.users(id) ON DELETE CASCADE
 );
