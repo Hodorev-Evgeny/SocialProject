@@ -43,3 +43,15 @@ func DomainFromResponse(user core_domain.User) UserDTOResponse {
 		TimeAdd:  user.Time_add,
 	}
 }
+
+func DomainToCurrentUser(user core_domain.User) CurrentUserResponse {
+	return CurrentUserResponse{
+		ID:         user.ID,
+		FullName:   user.Full_name,
+		Email:      user.Email,
+		Phone:      user.Phone_number,
+		Role:       user.Role,
+		IsVerified: user.Is_verified,
+		TimeAdd:    user.Time_add,
+	}
+}
