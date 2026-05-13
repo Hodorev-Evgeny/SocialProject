@@ -14,6 +14,17 @@ type UserDTOResponse struct {
 	TimeAdd  time.Time `json:"time_add"`
 }
 
+// CurrentUserResponse — профиль текущего пользователя (без пароля).
+type CurrentUserResponse struct {
+	ID          int       `json:"id"`
+	FullName    string    `json:"full_name"`
+	Email       string    `json:"email"`
+	Phone       *string   `json:"phone"`
+	Role        string    `json:"role"`
+	IsVerified  bool      `json:"is_verified"`
+	TimeAdd     time.Time `json:"time_add"`
+}
+
 func DTOFromDomain(userDto CreateUserRequest) core_domain.User {
 	return core_domain.CreateUnincelizedUser(
 		userDto.FullName,

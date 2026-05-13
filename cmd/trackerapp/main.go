@@ -59,7 +59,7 @@ func main() {
 	authServ := features_auth_service.NewAuthService(authRepo, userRepo, jwtCfg)
 
 	logger.Debug("starting initialization user transport")
-	userTransporthttp := features_users_transport.NewUserHTTPHandler(userServ)
+	userTransporthttp := features_users_transport.NewUserHTTPHandler(userServ, authServ)
 	userRouters := userTransporthttp.Routers()
 
 	logger.Debug("starting initialization auth transport")

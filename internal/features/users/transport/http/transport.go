@@ -5,11 +5,13 @@ import (
 	"net/http"
 
 	core_domain "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/domain"
+	core_middleware "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/transport/http/middleware"
 	core_transport_server "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/transport/server"
 )
 
 type UserHTTPHandler struct {
 	userService userService
+	meHandler   http.Handler
 }
 
 type userService interface {
@@ -43,10 +45,13 @@ type userService interface {
 
 func NewUserHTTPHandler(
 	userService userService,
+	verifier core_middleware.AccessTokenVerifier,
 ) *UserHTTPHandler {
-	return &UserHTTPHandler{
+	h := &UserHTTPHandler{
 		userService: userService,
 	}
+	h.meHandler = core_middleware.BearerAuth(verifier, http.HandlerFunc(h.CurrentUser))
+	return h
 }
 
 func (h *UserHTTPHandler) Routers() []core_transport_server.Route {
@@ -60,6 +65,11 @@ func (h *UserHTTPHandler) Routers() []core_transport_server.Route {
 			Method:  http.MethodGet,
 			Path:    "/users",
 			Handler: h.GetUsers,
+		},
+		{
+			Method:  http.MethodGet,
+			Path:    "/users/me",
+			Handler: http.HandlerFunc(h.meHandler.ServeHTTP),
 		},
 		{
 			Method:  http.MethodGet,

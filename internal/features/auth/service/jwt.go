@@ -5,6 +5,8 @@ import (
 	"strconv"
 	"time"
 
+	core_auth "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/auth"
+	core_errors "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/errors"
 	"github.com/golang-jwt/jwt/v5"
 )
 
@@ -35,4 +37,29 @@ func (s *AuthService) signAccessToken(userID int, email, role string) (token str
 	}
 
 	return signed, int64(s.jwt.AccessTTL.Seconds()), nil
+}
+
+// VerifyAccessToken валидирует access JWT и возвращает principal для мидлвари и хендлеров.
+func (s *AuthService) VerifyAccessToken(raw string) (core_auth.Principal, error) {
+	var claims accessClaims
+	token, err := jwt.ParseWithClaims(raw, &claims, func(t *jwt.Token) (any, error) {
+		if t.Method != jwt.SigningMethodHS256 {
+			return nil, fmt.Errorf("unexpected signing method")
+		}
+		return []byte(s.jwt.Secret), nil
+	})
+	if err != nil || token == nil || !token.Valid || claims.Subject == "" {
+		return core_auth.Principal{}, core_errors.ErrorUnauthorized
+	}
+
+	userID, err := strconv.Atoi(claims.Subject)
+	if err != nil || userID <= 0 {
+		return core_auth.Principal{}, core_errors.ErrorUnauthorized
+	}
+
+	return core_auth.Principal{
+		UserID: userID,
+		Email:  claims.Email,
+		Role:   claims.Role,
+	}, nil
 }
