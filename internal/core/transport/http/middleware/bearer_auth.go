@@ -1,6 +1,7 @@
 package core_middleware
 
 import (
+	"context"
 	"net/http"
 	"strings"
 
@@ -13,7 +14,7 @@ import (
 // проверяет сырой access token и возвращает principal.
 // Реализуется сервисом авторизации (например *AuthService).
 type AccessTokenVerifier interface {
-	VerifyAccessToken(rawToken string) (core_auth.Principal, error)
+	VerifyAccessToken(ctx context.Context, rawToken string) (core_auth.Principal, error)
 }
 
 //	проверяет заголовок Authorization: Bearer <token> и кладёт
@@ -27,7 +28,7 @@ func BearerAuth(verifier AccessTokenVerifier, next http.Handler) http.Handler {
 			return
 		}
 
-		p, err := verifier.VerifyAccessToken(raw)
+		p, err := verifier.VerifyAccessToken(r.Context(), raw)
 		if err != nil {
 			writeUnauthorized(w, r, "invalid or expired access token")
 			return
@@ -35,6 +36,29 @@ func BearerAuth(verifier AccessTokenVerifier, next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r.WithContext(core_auth.ContextWithPrincipal(r.Context(), p)))
 	})
+}
+
+// RawBearerAccessToken returns the bearer token when Authorization is "Bearer <token>" (well-formed).
+func RawBearerAccessToken(r *http.Request) (raw string, ok bool) {
+	raw, err := parseBearerToken(r.Header.Get("Authorization"))
+	if err != nil {
+		return "", false
+	}
+	return raw, true
+}
+
+// returns (principal, true) when Authorization carries a valid Bearer access JWT.
+// Missing header, malformed header, or invalid/expired token yields (zero, false).
+func OptionalAccessTokenPrincipal(verifier AccessTokenVerifier, r *http.Request) (core_auth.Principal, bool) {
+	raw, err := parseBearerToken(r.Header.Get("Authorization"))
+	if err != nil {
+		return core_auth.Principal{}, false
+	}
+	p, err := verifier.VerifyAccessToken(r.Context(), raw)
+	if err != nil {
+		return core_auth.Principal{}, false
+	}
+	return p, true
 }
 
 func parseBearerToken(header string) (string, error) {

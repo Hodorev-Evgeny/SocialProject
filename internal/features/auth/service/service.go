@@ -31,6 +31,10 @@ type Repository interface {
 	CreateRegisterVerification(ctx context.Context, id uuid.UUID, userID int, purpose string, codeHash string, expiresAt time.Time) error
 	InsertRegisteredUser(ctx context.Context, fullName, email string, phone *string, passwordHash string, timeAdd time.Time, role string) (userID int, err error)
 	VerifyOtpConsumeAndCreateRefreshSession(ctx context.Context, p features_auth_repository.VerifyOtpParams) (userID int, err error)
+	GetRefreshSessionByTokenHash(ctx context.Context, tokenHash string) (userID int, expiresAt time.Time, err error)
+	DeleteRefreshSessionByTokenHash(ctx context.Context, tokenHash string) error
+	InsertRevokedAccessToken(ctx context.Context, jti uuid.UUID, expiresAt time.Time) error
+	IsAccessTokenRevoked(ctx context.Context, jti uuid.UUID) (bool, error)
 }
 
 func NewAuthService(auth Repository, users userReader, jwt JWTConfig) *AuthService {

@@ -36,6 +36,10 @@ type authService interface {
 		verificationID string,
 		code string,
 	) (features_auth_service.IssuedTokenPair, error)
+
+	Logout(ctx context.Context, accessRawOptional string, refreshToken string) error
+
+	Refresh(ctx context.Context, refreshToken string) (features_auth_service.IssuedTokenPair, error)
 }
 
 func NewAuthHTTPHandler(
@@ -67,6 +71,16 @@ func (h *AuthHTTPHandler) Routers() []core_transport_server.Route {
 			Method:  http.MethodPost,
 			Path:    "/auth/register",
 			Handler: h.Register,
+		},
+		{
+			Method:  http.MethodPost,
+			Path:    "/auth/logout",
+			Handler: h.Logout,
+		},
+		{
+			Method:  http.MethodPost,
+			Path:    "/auth/refresh",
+			Handler: h.Refresh,
 		},
 	}
 }

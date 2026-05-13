@@ -31,6 +31,11 @@ func (h *HandlerResponse) JSONResponseHandler(statuscode int, data any) {
 	}
 }
 
+// NoContent sends 204 with an empty body (RFC 9110).
+func (h *HandlerResponse) NoContent() {
+	h.rw.WriteHeader(http.StatusNoContent)
+}
+
 func (h *HandlerResponse) ErrorResponse(err error, msg string) {
 	var (
 		statusCode int

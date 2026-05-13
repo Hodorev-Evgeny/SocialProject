@@ -82,11 +82,13 @@ func Trace() Middleware {
 
 			next.ServeHTTP(rw, r)
 
-			log.Debug(
-				"<< outgoing response",
-				zap.Int("status code:", rw.GetStatus()),
-				zap.Duration("latency", time.Now().Sub(before)),
-			)
+			fields := []zap.Field{zap.Duration("latency", time.Since(before))}
+			if code, ok := rw.SeenStatus(); ok {
+				fields = append(fields, zap.Int("status_code", code))
+			} else {
+				fields = append(fields, zap.String("status_code", "unset"))
+			}
+			log.Debug("<< outgoing response", fields...)
 		})
 	}
 }
