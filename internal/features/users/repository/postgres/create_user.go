@@ -11,31 +11,36 @@ func (r *UserRepository) AddUser(ctx context.Context, user core_domain.User) (co
 	ctx, close := context.WithTimeout(ctx, r.pool.GetTimeout())
 	defer close()
 
-	quqry := `
-	INSERT INTO trackerapp.users (full_name, email, phone_number, password, time_add)
-	VALUES ($1, $2, $3, $4, $5)
-	RETURNING id, full_name, email, phone_number, password, time_add;
-	`
+	query := `
+		INSERT INTO trackerapp.users (full_name, email, phone_number, password, role, time_add)
+		VALUES ($1, $2, $3, $4, $5, $6)
+		RETURNING id, full_name, email, phone_number, password, role, time_add;`
 
-	row := r.pool.QueryRow(ctx, quqry,
+	row := r.pool.QueryRow(ctx, query,
 		user.Full_name,
 		user.Email,
 		user.Phone_number,
 		user.Password,
-		user.Time_add)
+		string(user.Role),
+		user.Time_add,
+	)
 
 	var userDomain core_domain.User
+	var roleValue string
 	err := row.Scan(
 		&userDomain.ID,
 		&userDomain.Full_name,
 		&userDomain.Email,
 		&userDomain.Phone_number,
 		&userDomain.Password,
-		&userDomain.Time_add)
-
+		&roleValue,
+		&userDomain.Time_add,
+	)
 	if err != nil {
 		return core_domain.User{}, fmt.Errorf("error inserting user: %w", err)
 	}
+
+	userDomain.Role = core_domain.UserRole(roleValue)
 
 	return userDomain, nil
 }

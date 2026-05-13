@@ -16,18 +16,14 @@ type customValidator interface {
 
 func DecodeJSON(data any, r *http.Request) error {
 	if err := json.NewDecoder(r.Body).Decode(data); err != nil {
-		return fmt.Errorf("error encoding JSON: %w", err)
+		return fmt.Errorf("error decoding JSON: %w", err)
 	}
 
-	var err error
-
-	// проверка есть ли кастомные валидации
+	// проверка, есть ли кастомные валидации
 	value, ok := data.(customValidator)
 	if ok {
-		err = value.Validate()
-	} else {
-		err = v.Struct(value)
+		return value.Validate()
 	}
 
-	return err
+	return v.Struct(data)
 }

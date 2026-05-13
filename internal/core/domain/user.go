@@ -11,6 +11,32 @@ var (
 	UnincelizedID = -1
 )
 
+type UserRole string
+
+const (
+	UserRolePassenger UserRole = "passenger"
+	UserRoleDriver    UserRole = "driver"
+	UserRoleAdmin     UserRole = "admin"
+)
+
+func (r UserRole) IsValid() bool {
+	switch r {
+	case UserRolePassenger, UserRoleDriver, UserRoleAdmin:
+		return true
+	default:
+		return false
+	}
+}
+
+func (r UserRole) IsAssignableByAdmin() bool {
+	switch r {
+	case UserRolePassenger, UserRoleDriver:
+		return true
+	default:
+		return false
+	}
+}
+
 // создания доменой сущности пользователя
 type User struct {
 	ID           int
@@ -18,6 +44,7 @@ type User struct {
 	Email        string
 	Phone_number *string
 	Password     string
+	Role         UserRole
 	Time_add     time.Time
 }
 
@@ -27,6 +54,7 @@ func CreateUser(
 	email string,
 	phone *string,
 	password string,
+	role UserRole,
 ) User {
 	return User{
 		ID:           id,
@@ -34,6 +62,7 @@ func CreateUser(
 		Email:        email,
 		Phone_number: phone,
 		Password:     password,
+		Role:         role,
 		Time_add:     time.Now(),
 	}
 }
@@ -42,13 +71,16 @@ func CreateUnincelizedUser(
 	full_name string,
 	email string,
 	phone *string,
-	password string) User {
+	password string,
+	role UserRole,
+) User {
 	return CreateUser(
 		UnincelizedID,
 		full_name,
 		email,
 		phone,
 		password,
+		role,
 	)
 }
 
@@ -63,6 +95,10 @@ func (u *User) Validate() error {
 
 	if u.Password == "" {
 		return fmt.Errorf("invalid user password for user")
+	}
+
+	if !u.Role.IsValid() {
+		return fmt.Errorf("invalid user role")
 	}
 
 	if u.Phone_number != nil {

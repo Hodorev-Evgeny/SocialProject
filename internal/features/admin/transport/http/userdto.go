@@ -1,4 +1,4 @@
-package features_users_transport
+package features_admin_transport
 
 import (
 	"time"
@@ -13,16 +13,6 @@ type UserDTOResponse struct {
 	Phone    *string   `json:"phone"`
 	Role     string    `json:"role"`
 	TimeAdd  time.Time `json:"time_add"`
-}
-
-func DTOFromDomain(userDto CreateUserRequest) core_domain.User {
-	return core_domain.CreateUnincelizedUser(
-		userDto.FullName,
-		userDto.Email,
-		userDto.Phone,
-		userDto.Password,
-		core_domain.UserRole(userDto.Role),
-	)
 }
 
 func DomainFromResponse(user core_domain.User) UserDTOResponse {

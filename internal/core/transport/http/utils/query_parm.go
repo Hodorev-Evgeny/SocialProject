@@ -17,7 +17,7 @@ func GetIntQueryParm(r *http.Request, key string) (*int, error) {
 
 	valueInt, err := strconv.Atoi(value)
 	if err != nil {
-		return nil, fmt.Errorf("invalid value for value %s: %e", key, core_errors.ErrorValidation)
+		return nil, fmt.Errorf("invalid value for query param %s: %w", key, core_errors.ErrorValidation)
 	}
 
 	return &valueInt, nil

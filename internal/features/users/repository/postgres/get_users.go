@@ -18,7 +18,7 @@ func (r *UserRepository) GetUsers(
 	defer close()
 
 	query := `
-		SELECT *
+		SELECT id, full_name, email, phone_number, password, role, time_add
 		FROM trackerapp.users
 		ORDER BY id
 		LIMIT $1 OFFSET $2;`
@@ -32,6 +32,7 @@ func (r *UserRepository) GetUsers(
 	var users []core_domain.User
 	for rows.Next() {
 		var user core_domain.User
+		var roleValue string
 
 		err := rows.Scan(
 			&user.ID,
@@ -39,7 +40,9 @@ func (r *UserRepository) GetUsers(
 			&user.Email,
 			&user.Phone_number,
 			&user.Password,
-			&user.Time_add)
+			&roleValue,
+			&user.Time_add,
+		)
 		if err != nil {
 			if errors.Is(err, core_repository_pool.ErrNoRows) {
 				return nil, fmt.Errorf("user not in database: %w", core_errors.ErrorNotFoud)
@@ -47,7 +50,12 @@ func (r *UserRepository) GetUsers(
 			return nil, fmt.Errorf("error scan users: %w", err)
 		}
 
+		user.Role = core_domain.UserRole(roleValue)
 		users = append(users, user)
+	}
+
+	if err := rows.Err(); err != nil {
+		return nil, fmt.Errorf("error rows users: %w", err)
 	}
 
 	return users, nil

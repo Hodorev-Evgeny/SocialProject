@@ -12,6 +12,9 @@ import (
 	core_pgx_pool "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/repository/postgresql/pool/pgx"
 	core_middleware "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/transport/http/middleware"
 	core_transport_server "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/transport/server"
+	features_admin_repository "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/admin/repository/postgres"
+	feature_admin_service "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/admin/service"
+	features_admin_transport "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/admin/transport/http"
 	features_users_repository "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/users/repository/postgres"
 	feature_user_service "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/users/service"
 	features_users_transport "github.com/Hodorev-Evgeny/ExpensesTracker/internal/features/users/transport/http"
@@ -54,8 +57,17 @@ func main() {
 	userTransporthttp := features_users_transport.NewUserHTTPHandler(userServ)
 	userRouters := userTransporthttp.Routers()
 
+	logger.Debug("starting initialization admin service")
+	adminRepo := features_admin_repository.NewAdminRepository(pool)
+	adminServ := feature_admin_service.NewAdminService(adminRepo)
+
+	logger.Debug("starting initialization admin transport")
+	adminTransporthttp := features_admin_transport.NewAdminHTTPHandler(adminServ)
+	adminRouters := adminTransporthttp.Routers()
+
 	apiVersionRouter := core_transport_server.NewAPIVersionRouter(core_transport_server.ApiVersion1)
 	apiVersionRouter.RegisterRoutes(userRouters...)
+	apiVersionRouter.RegisterRoutes(adminRouters...)
 
 	httpServer := core_transport_server.NewServer(
 		core_transport_server.MustNewConfigServer(),

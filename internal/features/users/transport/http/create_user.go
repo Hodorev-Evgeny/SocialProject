@@ -13,6 +13,7 @@ type CreateUserRequest struct {
 	Password string  `json:"password" validate:"required,min=8,max=32"`
 	Email    string  `json:"email" validate:"required,email"`
 	Phone    *string `json:"phone" validate:"required,min=11,max=11, startswith=+"`
+	Role     string  `json:"role" validate:"required,oneof=passenger driver"`
 }
 
 type CreateUserResponse UserDTOResponse
@@ -39,9 +40,5 @@ func (h *UserHTTPHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
 
 	log.Info("Start writing response")
 	respons := DomainFromResponse(userDomain)
-	if err := json.NewEncoder(w).Encode(respons); err != nil {
-		RsponceHandler.ErrorResponse(err, "error writing response")
-		return
-	}
-	w.WriteHeader(http.StatusCreated)
+	RsponceHandler.JSONResponseHandler(http.StatusCreated, respons)
 }
