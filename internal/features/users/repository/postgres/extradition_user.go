@@ -16,7 +16,7 @@ func (r *UserRepository) ExtraditionUser(ctx context.Context, id int) (core_doma
 	defer cancel()
 
 	query := `
-		SELECT * 
+		SELECT *
 		FROM trackerapp.users 
         WHERE id=$1;`
 
@@ -29,7 +29,8 @@ func (r *UserRepository) ExtraditionUser(ctx context.Context, id int) (core_doma
 		&user.Email,
 		&user.Phone_number,
 		&user.Password,
-		&user.Time_add)
+		&user.Time_add,
+		&user.Description)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return core_domain.User{}, core_errors.ErrorNotFoud
