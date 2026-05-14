@@ -18,6 +18,8 @@ type User struct {
 	Email        string
 	Phone_number *string
 	Password     string
+	Role         string
+	Is_verified  bool
 	Time_add     time.Time
 	Description  *string
 }
@@ -64,6 +66,10 @@ func (u *User) Validate() error {
 
 	if u.Password == "" {
 		return fmt.Errorf("invalid user password for user")
+	}
+
+	if u.Role != "" && u.Role != "passenger" && u.Role != "driver" {
+		return fmt.Errorf("invalid user role")
 	}
 
 	if u.Phone_number != nil {

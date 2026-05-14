@@ -7,7 +7,7 @@ import (
 	"net/http"
 
 	core_errors "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/errors"
-	"github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/logger"
+	core_logger "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/logger"
 	"go.uber.org/zap"
 )
 
@@ -29,6 +29,11 @@ func (h *HandlerResponse) JSONResponseHandler(statuscode int, data any) {
 	if err := json.NewEncoder(h.rw).Encode(data); err != nil {
 		h.log.Error("Failed to encode response", zap.Error(err))
 	}
+}
+
+// NoContent sends 204 with an empty body (RFC 9110).
+func (h *HandlerResponse) NoContent() {
+	h.rw.WriteHeader(http.StatusNoContent)
 }
 
 func (h *HandlerResponse) ErrorResponse(err error, msg string) {

@@ -68,6 +68,14 @@ func (c *Pool) Query(ctx context.Context, sql string, args ...any) (core_reposit
 	return Rows{ans}, nil
 }
 
+func (c *Pool) Begin(ctx context.Context) (core_repository_pool.Tx, error) {
+	t, err := c.Pool.Begin(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return &Tx{tx: t}, nil
+}
+
 func CreatePoolMust(ctx context.Context, config PostgresConfig) *Pool {
 	poolconnect, err := CreatePool(ctx, config)
 	if err != nil {

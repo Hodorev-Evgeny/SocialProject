@@ -28,5 +28,12 @@ func (rw *ResponseWriter) GetStatus() int {
 		panic("uninitialized status code")
 	}
 	return rw.statuscode
+}
 
+// SeenStatus reports whether WriteHeader was called on this wrapper and the status if so.
+func (rw *ResponseWriter) SeenStatus() (code int, ok bool) {
+	if rw.statuscode == StatusCodeUninitialized {
+		return 0, false
+	}
+	return rw.statuscode, true
 }

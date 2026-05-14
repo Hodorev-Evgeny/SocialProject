@@ -15,7 +15,7 @@ func (r *UserRepository) PatchUser(ctx context.Context,
 			UPDATE trackerapp.users 
 			SET full_name=$1, email=$2, phone_number=$3
 			WHERE id=$4
-			RETURNING id, full_name, email, phone_number, password, time_add, description;`
+			RETURNING id, full_name, email, phone_number, password, time_add, role, is_verified;`
 
 	row := r.pool.QueryRow(ctx,
 		query,
@@ -33,7 +33,8 @@ func (r *UserRepository) PatchUser(ctx context.Context,
 		&UserUpdated.Phone_number,
 		&UserUpdated.Password,
 		&UserUpdated.Time_add,
-		&UserUpdated.Description)
+		&UserUpdated.Role,
+		&UserUpdated.Is_verified)
 	if err != nil {
 		return core_domain.User{}, fmt.Errorf("failed to update user: %w", err)
 	}

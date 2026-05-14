@@ -40,7 +40,8 @@ func (r *UserRepository) GetUsers(
 			&user.Phone_number,
 			&user.Password,
 			&user.Time_add,
-			&user.Description)
+			&user.Role,
+			&user.Is_verified)
 		if err != nil {
 			if errors.Is(err, core_repository_pool.ErrNoRows) {
 				return nil, fmt.Errorf("user not in database: %w", core_errors.ErrorNotFoud)
