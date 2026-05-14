@@ -21,6 +21,7 @@ type User struct {
 	Role         string
 	Is_verified  bool
 	Time_add     time.Time
+	Description  *string
 }
 
 func CreateUser(

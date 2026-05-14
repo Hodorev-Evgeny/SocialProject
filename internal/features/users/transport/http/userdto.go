@@ -7,11 +7,12 @@ import (
 )
 
 type UserDTOResponse struct {
-	ID       int       `json:"id"`
-	FullName string    `json:"full_name"`
-	Email    string    `json:"email"`
-	Phone    *string   `json:"phone"`
-	TimeAdd  time.Time `json:"time_add"`
+	ID          int       `json:"id"`
+	FullName    string    `json:"full_name"`
+	Email       string    `json:"email"`
+	Phone       *string   `json:"phone"`
+	TimeAdd     time.Time `json:"time_add"`
+	Description *string   `json:"description"`
 }
 
 // CurrentUserResponse — профиль текущего пользователя (без пароля).
@@ -36,11 +37,12 @@ func DTOFromDomain(userDto CreateUserRequest) core_domain.User {
 
 func DomainFromResponse(user core_domain.User) UserDTOResponse {
 	return UserDTOResponse{
-		ID:       user.ID,
-		FullName: user.Full_name,
-		Email:    user.Email,
-		Phone:    user.Phone_number,
-		TimeAdd:  user.Time_add,
+		ID:          user.ID,
+		FullName:    user.Full_name,
+		Email:       user.Email,
+		Phone:       user.Phone_number,
+		TimeAdd:     user.Time_add,
+		Description: user.Description,
 	}
 }
 

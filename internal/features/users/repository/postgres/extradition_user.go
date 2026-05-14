@@ -16,7 +16,7 @@ func (r *UserRepository) ExtraditionUser(ctx context.Context, id int) (core_doma
 	defer cancel()
 
 	query := `
-		SELECT * 
+		SELECT *
 		FROM trackerapp.users 
         WHERE id=$1;`
 

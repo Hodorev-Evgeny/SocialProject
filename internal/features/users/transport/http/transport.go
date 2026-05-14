@@ -41,6 +41,11 @@ type userService interface {
 		id int,
 		req core_domain.UserPatch,
 	) (core_domain.User, error)
+
+	GetPassengerForDriver(
+		ctx context.Context,
+		id int,
+	) (core_domain.User, error)
 }
 
 func NewUserHTTPHandler(
@@ -85,6 +90,11 @@ func (h *UserHTTPHandler) Routers() []core_transport_server.Route {
 			Method:  http.MethodPatch,
 			Path:    "/users/{id}",
 			Handler: h.PatchUser,
+		},
+		{
+			Method:  http.MethodGet,
+			Path:    "/drivers/passengers/{id}",
+			Handler: h.GetPassengerForDriver,
 		},
 	}
 }

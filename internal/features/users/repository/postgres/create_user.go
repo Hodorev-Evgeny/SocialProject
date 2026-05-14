@@ -14,7 +14,7 @@ func (r *UserRepository) AddUser(ctx context.Context, user core_domain.User) (co
 	quqry := `
 	INSERT INTO trackerapp.users (full_name, email, phone_number, password, time_add)
 	VALUES ($1, $2, $3, $4, $5)
-	RETURNING id, full_name, email, phone_number, password, time_add, role, is_verified;
+	RETURNING id, full_name, email, phone_number, password, time_add, description;
 	`
 
 	row := r.pool.QueryRow(ctx, quqry,
@@ -32,8 +32,7 @@ func (r *UserRepository) AddUser(ctx context.Context, user core_domain.User) (co
 		&userDomain.Phone_number,
 		&userDomain.Password,
 		&userDomain.Time_add,
-		&userDomain.Role,
-		&userDomain.Is_verified)
+		&userDomain.Description)
 
 	if err != nil {
 		return core_domain.User{}, fmt.Errorf("error inserting user: %w", err)
