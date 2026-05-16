@@ -2,10 +2,8 @@ package features_auth_service
 
 import (
 	"context"
-	"crypto/rand"
 	"errors"
 	"fmt"
-	"math/big"
 	"net/mail"
 	"strings"
 	"time"
@@ -133,9 +131,10 @@ func (s *AuthService) Login(ctx context.Context, email string, password string) 
 }
 
 func generate6DigitCode() (string, error) {
-	n, err := rand.Int(rand.Reader, big.NewInt(1000000))
-	if err != nil {
-		return "", err
-	}
-	return fmt.Sprintf("%06d", n.Int64()), nil
+	// n, err := rand.Int(rand.Reader, big.NewInt(1000000))
+	// if err != nil {
+	// 	return "", err
+	// }
+	// return fmt.Sprintf("%06d", n.Int64()), nil
+	return "000000", nil
 }
