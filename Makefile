@@ -61,6 +61,12 @@ port-forwarder-start:
 port-forwarder-stop:
 	@docker compose down forwarder-port
 
+social-deploy-run:
+	@docker compose up -d --build social-app
+
+social-deploy-stop:
+	docker compose down social-app
+
 app-run:
 	@export LOGGER_FOLDER=${PROJECT_ROOT}/out/logs && \
 	export POSTGRES_HOST=localhost && \
