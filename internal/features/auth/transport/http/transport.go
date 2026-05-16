@@ -11,6 +11,12 @@ import (
 
 type AuthHTTPHandler struct {
 	authService authService
+	otpMailer   otpMailer
+}
+
+type otpMailer interface {
+	SendRegisterOTP(ctx context.Context, toEmail string, code string) error
+	SendLoginOTP(ctx context.Context, toEmail string, code string) error
 }
 
 type authService interface {
@@ -44,9 +50,11 @@ type authService interface {
 
 func NewAuthHTTPHandler(
 	authService authService,
+	otpMailer otpMailer,
 ) *AuthHTTPHandler {
 	return &AuthHTTPHandler{
 		authService: authService,
+		otpMailer:   otpMailer,
 	}
 }
 

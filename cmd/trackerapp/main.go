@@ -9,6 +9,7 @@ import (
 
 	_ "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/domain"
 	core_logger "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/logger"
+	mailresend "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/mail/resend"
 	core_pgx_pool "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/repository/postgresql/pool/pgx"
 	core_middleware "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/transport/http/middleware"
 	core_transport_server "github.com/Hodorev-Evgeny/ExpensesTracker/internal/core/transport/server"
@@ -63,7 +64,8 @@ func main() {
 	userRouters := userTransporthttp.Routers()
 
 	logger.Debug("starting initialization auth transport")
-	authTransporthttp := features_auth_transport.NewAuthHTTPHandler(authServ)
+	otpMailer := mailresend.NewSender(mailresend.MustConfig())
+	authTransporthttp := features_auth_transport.NewAuthHTTPHandler(authServ, otpMailer)
 	authRouters := authTransporthttp.Routers()
 
 	apiVersionRouter := core_transport_server.NewAPIVersionRouter(core_transport_server.ApiVersion1)

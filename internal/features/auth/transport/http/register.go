@@ -99,11 +99,15 @@ func (h *AuthHTTPHandler) Register(w http.ResponseWriter, req *http.Request) {
 	}
 
 	log.Info(
-		"register otp generated (email send stubbed)",
+		"register otp generated",
 		zap.String("email", body.Email),
 		zap.String("verification_id", verificationID),
 		zap.String("code", otpCode),
 	)
+
+	if err := h.otpMailer.SendRegisterOTP(ctx, body.Email, otpCode); err != nil {
+		log.Error("register otp resend send failed", zap.Error(err), zap.String("email", body.Email))
+	}
 
 	responseHandler.JSONResponseHandler(http.StatusCreated, AuthChallengeResponse{
 		VerificationID: verificationID,

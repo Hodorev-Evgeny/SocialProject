@@ -57,11 +57,15 @@ func (h *AuthHTTPHandler) Login(w http.ResponseWriter, req *http.Request) {
 	}
 
 	log.Info(
-		"login otp generated (email send stubbed)",
+		"login otp generated",
 		zap.String("email", body.Email),
 		zap.String("verification_id", verificationID),
 		zap.String("code", otpCode),
 	)
+
+	if err := h.otpMailer.SendLoginOTP(ctx, body.Email, otpCode); err != nil {
+		log.Error("login otp resend send failed", zap.Error(err), zap.String("email", body.Email))
+	}
 
 	responseHandler.JSONResponseHandler(http.StatusOK, AuthChallengeResponse{
 		VerificationID: verificationID,
