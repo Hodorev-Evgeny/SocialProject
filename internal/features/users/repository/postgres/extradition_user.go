@@ -31,7 +31,8 @@ func (r *UserRepository) ExtraditionUser(ctx context.Context, id int) (core_doma
 		&user.Password,
 		&user.Time_add,
 		&user.Role,
-		&user.Is_verified)
+		&user.Is_verified,
+		&user.Description)
 	if err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
 			return core_domain.User{}, core_errors.ErrorNotFoud
